@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>My first three.js app</title>
+    <style>
+      body { margin: 0; 
+    background-color: red;
+    }
+    .controller {
+  --size: 210px;
+  --btn: 68px;
+  --gap: 6px;
+
+  position: absolute;
+  left: 24px;
+  bottom: 24px;
+  z-index: 10;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #2b2b2e, #0e0e10);
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.55),
+    inset 0 2px 3px rgba(255, 255, 255, 0.08);
+  user-select: none;
+  touch-action: none;
+}
+
+/* shared PS4-style button */
+.controller > div {
+  position: absolute;
+  width: var(--btn);
+  height: var(--btn);
+  border-radius: 50%;
+  cursor: pointer;
+  background-color: #1c1c1f;
+  background-image: radial-gradient(circle at 50% 35%, #3a3a3f 0%, #232326 55%, #141416 100%);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+  box-shadow:
+    0 3px 6px rgba(0, 0, 0, 0.7),
+    inset 0 1px 1px rgba(255, 255, 255, 0.18),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.6);
+  transition: transform 0.06s, box-shadow 0.06s, filter 0.06s;
+}
+
+.controller > div::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.6));
+}
+
+/* pressed state */
+.controller > div:active {
+  transform: scale(0.94);
+  filter: brightness(0.85);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.7),
+    inset 0 3px 6px rgba(0, 0, 0, 0.7);
+}
+
+/* diamond positions */
+.controller-top   { top: var(--gap);    left: calc(50% - var(--btn) / 2); }
+.controller-down  { bottom: var(--gap); left: calc(50% - var(--btn) / 2); }
+.controller-left  { left: var(--gap);   top: calc(50% - var(--btn) / 2); }
+.controller-right { right: var(--gap);  top: calc(50% - var(--btn) / 2); }
+
+/* Triangle (green) */
+.controller-top::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,25 77,71 23,71' fill='none' stroke='%2300d4a0' stroke-width='7' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+/* Circle (red) */
+.controller-right::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='25' fill='none' stroke='%23ff4b55' stroke-width='7'/%3E%3C/svg%3E");
+}
+
+/* Cross (blue) */
+.controller-down::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M29 29L71 71M71 29L29 71' stroke='%235b8cff' stroke-width='7' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+/* Square (pink) */
+.controller-left::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='27' y='27' width='46' height='46' rx='3' fill='none' stroke='%23ff8ad8' stroke-width='7' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+/* Center button: small PS-style button so your "hold" still works */
+.controller-hold {
+  --hold: 36px;
+  width: var(--hold) !important;
+  height: var(--hold) !important;
+  top: calc(50% - var(--hold) / 2);
+  left: calc(50% - var(--hold) / 2);
+}
+    
+    </style>
+  </head>
+  <body>
+    <div class="controller">
+        <div class="controller-top"></div>
+        <div class="controller-hold"></div>
+        <div class="controller-right"></div>
+        <div class="controller-left"></div>
+        <div class="controller-down"></div>
+    </div>
+    <script type="module" src="/scripts/main.js"></script>
+    <script type="module" src="/scripts/controls.js"></script>
+  </body>
+</html>

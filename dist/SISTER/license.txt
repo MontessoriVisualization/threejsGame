@@ -1,0 +1,11 @@
+Model Information:
+* title:	Sester Genessa | Mortal Shell
+* source:	https://sketchfab.com/3d-models/sester-genessa-mortal-shell-03193427448c4cb38f766b6e1b44c902
+* author:	carcinova (https://sketchfab.com/carcinova)
+
+Model License:
+* license type:	CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)
+* requirements:	Author must be credited. No commercial use. Modified versions must have the same license.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Sester Genessa | Mortal Shell" (https://sketchfab.com/3d-models/sester-genessa-mortal-shell-03193427448c4cb38f766b6e1b44c902) by carcinova (https://sketchfab.com/carcinova) licensed under CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)

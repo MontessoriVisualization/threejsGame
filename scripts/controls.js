@@ -4,8 +4,7 @@ export const input = { x: 0, z: 0 }; // x: -1 left, +1 right | z: -1 up/forward,
 // so read both through consumeLook() instead of touching these directly.
 const look = { padX: 0, padY: 0, mouseDX: 0, mouseDY: 0 };
 
-const sources = { key: new Set(), ui: new Set() };
-const padMove = { x: 0, z: 0 }; // left stick, analog
+const sources = { key: new Set(), ui: n0, z: 0 }; // left stick, analog
 
 const isHeld = (a) => Object.values(sources).some((s) => s.has(a));
 const clamp = (v) => Math.max(-1, Math.min(1, v));

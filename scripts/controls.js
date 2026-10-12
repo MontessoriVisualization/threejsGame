@@ -43,6 +43,9 @@ const uiActions = {
   '.controller-attack': 'attack',
   '.controller-secondary': 'secondary',
   '.controller-roll': 'roll',
+  '.action-attack': 'attack',
+  '.action-secondary': 'secondary',
+  '.action-roll': 'roll',
 };
 
 // Returns which actions were pressed since the last call, then clears them.
@@ -197,4 +200,39 @@ export function consumeLook(dt = 1 / 60, { mouseSens = 0.002, padSpeed = 2.5 } =
   const pitch = look.mouseDY * mouseSens + look.padY * padSpeed * dt;
   look.mouseDX = look.mouseDY = 0; // mouse deltas are one-shot, so reset after reading
   return { yaw, pitch };
+}
+
+// ---------- touch camera look (mobile) ----------
+// Dragging on the .touch-look-zone (right half of the screen) rotates the camera.
+// Touches on UI buttons (z-index 10) sit above the zone (z-index 5), so they still work.
+{
+  const zone = document.querySelector('.touch-look-zone');
+  if (zone) {
+    const TOUCH_SENS = 0.004;         // radians per CSS pixel of finger movement
+    const activePointers = new Map();  // pointerId → { x, y }
+
+    zone.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      zone.setPointerCapture(e.pointerId);
+      activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    });
+
+    zone.addEventListener('pointermove', (e) => {
+      const prev = activePointers.get(e.pointerId);
+      if (!prev) return;
+
+      // feed deltas into the same look accumulator the mouse uses
+      look.mouseDX += (e.clientX - prev.x) * (TOUCH_SENS / 0.002);
+      look.mouseDY += (e.clientY - prev.y) * (TOUCH_SENS / 0.002);
+
+      prev.x = e.clientX;
+      prev.y = e.clientY;
+    });
+
+    for (const ev of ['pointerup', 'pointercancel']) {
+      zone.addEventListener(ev, (e) => {
+        activePointers.delete(e.pointerId);
+      });
+    }
+  }
 }

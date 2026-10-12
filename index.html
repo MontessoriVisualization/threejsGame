@@ -2,11 +2,25 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>My first three.js app</title>
     <style>
-      body { margin: 0; 
+      body { margin: 0;
     background-color: red;
+    overflow: hidden;
+    touch-action: none;            /* prevent pull-to-refresh and overscroll */
+    -webkit-touch-callout: none;   /* disable callout on iOS */
     }
+
+    /* ---- hide on-screen controls on desktop, show on touch ---- */
+    .controller, .actions { display: none; }
+    @media (pointer: coarse) {
+      .controller, .actions { display: block; }
+    }
+
+    /* ============================================================
+       LEFT SIDE – D-PAD (movement)
+       ============================================================ */
     .controller {
   --size: 210px;
   --btn: 68px;
@@ -99,7 +113,85 @@
   top: calc(50% - var(--hold) / 2);
   left: calc(50% - var(--hold) / 2);
 }
-    
+
+    /* ============================================================
+       RIGHT SIDE – ACTION BUTTONS (attack / roll / secondary)
+       ============================================================ */
+    .actions {
+      --size: 210px;
+      --btn: 68px;
+      --gap: 6px;
+
+      position: absolute;
+      right: 24px;
+      bottom: 24px;
+      z-index: 10;
+      width: var(--size);
+      height: var(--size);
+      border-radius: 50%;
+      background: radial-gradient(circle at 65% 30%, #2b2b2e, #0e0e10);
+      box-shadow:
+        0 10px 24px rgba(0, 0, 0, 0.55),
+        inset 0 2px 3px rgba(255, 255, 255, 0.08);
+      user-select: none;
+      touch-action: none;
+    }
+
+    /* shared button style (same as left-side d-pad) */
+    .actions > div {
+      position: absolute;
+      width: var(--btn);
+      height: var(--btn);
+      border-radius: 50%;
+      cursor: pointer;
+      background-color: #1c1c1f;
+      background-image: radial-gradient(circle at 50% 35%, #3a3a3f 0%, #232326 55%, #141416 100%);
+      box-shadow:
+        0 3px 6px rgba(0, 0, 0, 0.7),
+        inset 0 1px 1px rgba(255, 255, 255, 0.18),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.6);
+      transition: transform 0.06s, box-shadow 0.06s, filter 0.06s;
+
+      /* label */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font: bold 11px/1 system-ui, sans-serif;
+      color: rgba(255, 255, 255, 0.7);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .actions > div:active {
+      transform: scale(0.94);
+      filter: brightness(0.85);
+      box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.7),
+        inset 0 3px 6px rgba(0, 0, 0, 0.7);
+    }
+
+    /* diamond layout — same positions as the d-pad */
+    .action-attack    { top: var(--gap);    left: calc(50% - var(--btn) / 2); color: #ff4b55 !important; }
+    .action-roll      { bottom: var(--gap); left: calc(50% - var(--btn) / 2); color: #5b8cff !important; }
+    .action-secondary { right: var(--gap);  top: calc(50% - var(--btn) / 2);  color: #ff8ad8 !important; }
+
+    /* ============================================================
+       TOUCH LOOK ZONE – invisible overlay on the right half
+       ============================================================ */
+    .touch-look-zone {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 50%;
+      height: 100%;
+      z-index: 5;          /* below buttons (z-index 10), above canvas */
+      touch-action: none;
+    }
+    /* hide on desktop */
+    @media (pointer: fine) {
+      .touch-look-zone { display: none; }
+    }
+
     </style>
   </head>
   <body>
@@ -110,6 +202,17 @@
         <div class="controller-left"></div>
         <div class="controller-down"></div>
     </div>
+
+    <!-- RIGHT SIDE: action buttons -->
+    <div class="actions">
+        <div class="action-attack">ATK</div>
+        <div class="action-roll">ROLL</div>
+        <div class="action-secondary">SEC</div>
+    </div>
+
+    <!-- invisible touch zone for camera look (right half of screen) -->
+    <div class="touch-look-zone"></div>
+
     <script type="module" src="/scripts/main.js"></script>
     <script type="module" src="/scripts/controls.js"></script>
   </body>

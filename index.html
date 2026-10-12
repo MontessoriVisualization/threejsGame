@@ -5,192 +5,217 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>My first three.js app</title>
     <style>
-      body { margin: 0;
-    background-color: red;
-    overflow: hidden;
-    touch-action: none;            /* prevent pull-to-refresh and overscroll */
-    -webkit-touch-callout: none;   /* disable callout on iOS */
-    }
+      body {
+        margin: 0;
+        background-color: #0d0e15;
+        overflow: hidden;
+        touch-action: none;
+        -webkit-touch-callout: none;
+        user-select: none;
+      }
 
-    /* ---- hide on-screen controls on desktop, show on touch ---- */
-    .controller, .actions { display: none; }
-    @media (pointer: coarse) {
-      .controller, .actions { display: block; }
-    }
+      /* ============================================================
+         VISIBILITY: HIDDEN ON PC / LAPTOPS OR WHEN CONTROLLER CONNECTED
+         Only shown if body has .touch-controls-enabled class AND touch screen
+         ============================================================ */
+      .controller, .actions {
+        display: none !important;
+      }
 
-    /* ============================================================
-       LEFT SIDE – D-PAD (movement)
-       ============================================================ */
-    .controller {
-  --size: 210px;
-  --btn: 68px;
-  --gap: 6px;
+      body.touch-controls-enabled .controller,
+      body.touch-controls-enabled .actions {
+        display: block !important;
+      }
 
-  position: absolute;
-  left: 24px;
-  bottom: 24px;
-  z-index: 10;
-  width: var(--size);
-  height: var(--size);
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #2b2b2e, #0e0e10);
-  box-shadow:
-    0 10px 24px rgba(0, 0, 0, 0.55),
-    inset 0 2px 3px rgba(255, 255, 255, 0.08);
-  user-select: none;
-  touch-action: none;
-}
+      /* Extra safety: pure mouse/pointer desktop devices always hide */
+      @media (pointer: fine) and (hover: hover) {
+        .controller, .actions {
+          display: none !important;
+        }
+      }
 
-/* shared PS4-style button */
-.controller > div {
-  position: absolute;
-  width: var(--btn);
-  height: var(--btn);
-  border-radius: 50%;
-  cursor: pointer;
-  background-color: #1c1c1f;
-  background-image: radial-gradient(circle at 50% 35%, #3a3a3f 0%, #232326 55%, #141416 100%);
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 100% 100%;
-  box-shadow:
-    0 3px 6px rgba(0, 0, 0, 0.7),
-    inset 0 1px 1px rgba(255, 255, 255, 0.18),
-    inset 0 -2px 4px rgba(0, 0, 0, 0.6);
-  transition: transform 0.06s, box-shadow 0.06s, filter 0.06s;
-}
+      /* ============================================================
+         SLEEK MINIMAL CONTROLS (Glassmorphic & ergonomic)
+         ============================================================ */
+      :root {
+        --pad-size: 170px;
+        --btn-size: 52px;
+        --btn-bg: rgba(255, 255, 255, 0.08);
+        --btn-border: rgba(255, 255, 255, 0.16);
+        --btn-active: rgba(255, 255, 255, 0.28);
+      }
 
-.controller > div::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 100% 100%;
-  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.6));
-}
+      .controller, .actions {
+        position: absolute;
+        bottom: 28px;
+        z-index: 20;
+        width: var(--pad-size);
+        height: var(--pad-size);
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(20, 24, 35, 0.45) 0%, rgba(10, 12, 18, 0.65) 100%);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.12);
+        touch-action: none;
+      }
 
-/* pressed state */
-.controller > div:active {
-  transform: scale(0.94);
-  filter: brightness(0.85);
-  box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.7),
-    inset 0 3px 6px rgba(0, 0, 0, 0.7);
-}
+      .controller {
+        left: 28px;
+      }
 
-/* diamond positions */
-.controller-top   { top: var(--gap);    left: calc(50% - var(--btn) / 2); }
-.controller-down  { bottom: var(--gap); left: calc(50% - var(--btn) / 2); }
-.controller-left  { left: var(--gap);   top: calc(50% - var(--btn) / 2); }
-.controller-right { right: var(--gap);  top: calc(50% - var(--btn) / 2); }
+      .actions {
+        right: 28px;
+      }
 
-/* Triangle (green) */
-.controller-top::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,25 77,71 23,71' fill='none' stroke='%2300d4a0' stroke-width='7' stroke-linejoin='round'/%3E%3C/svg%3E");
-}
+      /* Shared Button Style */
+      .controller > div,
+      .actions > div {
+        position: absolute;
+        width: var(--btn-size);
+        height: var(--btn-size);
+        border-radius: 50%;
+        cursor: pointer;
+        background: var(--btn-bg);
+        border: 1px solid var(--btn-border);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35), inset 0 1px 2px rgba(255, 255, 255, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.08s ease, background 0.08s ease, box-shadow 0.08s ease;
+        -webkit-tap-highlight-color: transparent;
+      }
 
-/* Circle (red) */
-.controller-right::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='25' fill='none' stroke='%23ff4b55' stroke-width='7'/%3E%3C/svg%3E");
-}
+      .controller > div:active,
+      .actions > div:active {
+        transform: scale(0.91);
+        background: var(--btn-active);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5), inset 0 2px 4px rgba(0, 0, 0, 0.4);
+      }
 
-/* Cross (blue) */
-.controller-down::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M29 29L71 71M71 29L29 71' stroke='%235b8cff' stroke-width='7' stroke-linecap='round'/%3E%3C/svg%3E");
-}
+      /* Positions on standard diamond */
+      .controller-top, .action-attack {
+        top: 8px;
+        left: calc(50% - var(--btn-size) / 2);
+      }
+      .controller-down, .action-roll {
+        bottom: 8px;
+        left: calc(50% - var(--btn-size) / 2);
+      }
+      .controller-left {
+        left: 8px;
+        top: calc(50% - var(--btn-size) / 2);
+      }
+      .controller-right, .action-secondary {
+        right: 8px;
+        top: calc(50% - var(--btn-size) / 2);
+      }
 
-/* Square (pink) */
-.controller-left::after {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='27' y='27' width='46' height='46' rx='3' fill='none' stroke='%23ff8ad8' stroke-width='7' stroke-linejoin='round'/%3E%3C/svg%3E");
-}
+      /* Center Hold Button */
+      .controller-hold {
+        width: 34px !important;
+        height: 34px !important;
+        top: calc(50% - 17px);
+        left: calc(50% - 17px);
+        opacity: 0.6;
+        border-radius: 50%;
+      }
 
-/* Center button: small PS-style button so your "hold" still works */
-.controller-hold {
-  --hold: 36px;
-  width: var(--hold) !important;
-  height: var(--hold) !important;
-  top: calc(50% - var(--hold) / 2);
-  left: calc(50% - var(--hold) / 2);
-}
+      /* Modern D-pad Arrows */
+      .controller > div::after {
+        content: "";
+        width: 0;
+        height: 0;
+        border-style: solid;
+      }
 
-    /* ============================================================
-       RIGHT SIDE – ACTION BUTTONS (attack / roll / secondary)
-       ============================================================ */
-    .actions {
-      --size: 210px;
-      --btn: 68px;
-      --gap: 6px;
+      .controller-top::after {
+        border-width: 0 7px 11px 7px;
+        border-color: transparent transparent rgba(255, 255, 255, 0.85) transparent;
+      }
+      .controller-down::after {
+        border-width: 11px 7px 0 7px;
+        border-color: rgba(255, 255, 255, 0.85) transparent transparent transparent;
+      }
+      .controller-left::after {
+        border-width: 7px 11px 7px 0;
+        border-color: transparent rgba(255, 255, 255, 0.85) transparent transparent;
+      }
+      .controller-right::after {
+        border-width: 7px 0 7px 11px;
+        border-color: transparent transparent transparent rgba(255, 255, 255, 0.85);
+      }
+      .controller-hold::after {
+        content: "";
+        width: 8px;
+        height: 8px;
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 50%;
+      }
 
-      position: absolute;
-      right: 24px;
-      bottom: 24px;
-      z-index: 10;
-      width: var(--size);
-      height: var(--size);
-      border-radius: 50%;
-      background: radial-gradient(circle at 65% 30%, #2b2b2e, #0e0e10);
-      box-shadow:
-        0 10px 24px rgba(0, 0, 0, 0.55),
-        inset 0 2px 3px rgba(255, 255, 255, 0.08);
-      user-select: none;
-      touch-action: none;
-    }
+      /* Action Buttons Styling */
+      .actions > div {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+      }
 
-    /* shared button style (same as left-side d-pad) */
-    .actions > div {
-      position: absolute;
-      width: var(--btn);
-      height: var(--btn);
-      border-radius: 50%;
-      cursor: pointer;
-      background-color: #1c1c1f;
-      background-image: radial-gradient(circle at 50% 35%, #3a3a3f 0%, #232326 55%, #141416 100%);
-      box-shadow:
-        0 3px 6px rgba(0, 0, 0, 0.7),
-        inset 0 1px 1px rgba(255, 255, 255, 0.18),
-        inset 0 -2px 4px rgba(0, 0, 0, 0.6);
-      transition: transform 0.06s, box-shadow 0.06s, filter 0.06s;
+      .action-attack {
+        color: #ff526c;
+        border-color: rgba(255, 82, 108, 0.35);
+        background: radial-gradient(circle, rgba(255, 82, 108, 0.15) 0%, rgba(255, 82, 108, 0.05) 100%);
+      }
+      .action-roll {
+        color: #4da4ff;
+        border-color: rgba(77, 164, 255, 0.35);
+        background: radial-gradient(circle, rgba(77, 164, 255, 0.15) 0%, rgba(77, 164, 255, 0.05) 100%);
+      }
+      .action-secondary {
+        color: #c471ed;
+        border-color: rgba(196, 113, 237, 0.35);
+        background: radial-gradient(circle, rgba(196, 113, 237, 0.15) 0%, rgba(196, 113, 237, 0.05) 100%);
+      }
 
-      /* label */
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font: bold 11px/1 system-ui, sans-serif;
-      color: rgba(255, 255, 255, 0.7);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
+      /* ============================================================
+         ROTATE SCREEN OVERLAY – portrait only
+         ============================================================ */
+      .rotate-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: rgba(10, 12, 18, 0.94);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        color: #ffffff;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-size: 17px;
+        font-weight: 500;
+        text-align: center;
+        padding: 32px;
+      }
 
-    .actions > div:active {
-      transform: scale(0.94);
-      filter: brightness(0.85);
-      box-shadow:
-        0 1px 2px rgba(0, 0, 0, 0.7),
-        inset 0 3px 6px rgba(0, 0, 0, 0.7);
-    }
+      .rotate-overlay svg {
+        width: 72px;
+        height: 72px;
+        opacity: 0.9;
+        animation: rock 2s ease-in-out infinite;
+      }
 
-    /* diamond layout — same positions as the d-pad */
-    .action-attack    { top: var(--gap);    left: calc(50% - var(--btn) / 2); color: #ff4b55 !important; }
-    .action-roll      { bottom: var(--gap); left: calc(50% - var(--btn) / 2); color: #5b8cff !important; }
-    .action-secondary { right: var(--gap);  top: calc(50% - var(--btn) / 2);  color: #ff8ad8 !important; }
+      @keyframes rock {
+        0%, 100% { transform: rotate(0deg); }
+        30%, 70% { transform: rotate(90deg); }
+      }
 
-    /* ============================================================
-       TOUCH LOOK ZONE – invisible overlay on the right half
-       ============================================================ */
-    .touch-look-zone {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 50%;
-      height: 100%;
-      z-index: 5;          /* below buttons (z-index 10), above canvas */
-      touch-action: none;
-    }
-    /* hide on desktop */
-    @media (pointer: fine) {
-      .touch-look-zone { display: none; }
-    }
+      /* only show rotate overlay on touch phones in portrait */
+      @media (pointer: coarse) and (orientation: portrait) {
+        .rotate-overlay { display: flex; }
+      }
 
     </style>
   </head>
@@ -210,10 +235,45 @@
         <div class="action-secondary">SEC</div>
     </div>
 
-    <!-- invisible touch zone for camera look (right half of screen) -->
-    <div class="touch-look-zone"></div>
+
+    <!-- rotate-your-phone overlay (CSS hides it in landscape / on desktop) -->
+    <div class="rotate-overlay">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="4" y="2" width="16" height="20" rx="2" />
+        <line x1="12" y1="18" x2="12" y2="18.01" stroke-width="2" />
+      </svg>
+      <span>Rotate your device to landscape</span>
+    </div>
 
     <script type="module" src="/scripts/main.js"></script>
     <script type="module" src="/scripts/controls.js"></script>
+
+    <!-- try to auto-lock orientation to landscape -->
+    <script>
+      (function () {
+        // The Screen Orientation API only works in fullscreen or installed PWA mode.
+        // On first tap we request fullscreen, then lock to landscape.
+        function tryLock() {
+          if (screen.orientation && screen.orientation.lock) {
+            screen.orientation.lock('landscape').catch(function () {
+              // Silently ignore — the CSS overlay handles the fallback.
+            });
+          }
+        }
+
+        // Attempt immediately (works in PWA / already-fullscreen contexts).
+        tryLock();
+
+        // On the first user interaction, go fullscreen + lock.
+        document.addEventListener('touchstart', function onTouch() {
+          document.removeEventListener('touchstart', onTouch);
+          var el = document.documentElement;
+          var rfs = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+          if (rfs) {
+            rfs.call(el).then(tryLock).catch(function () {});
+          }
+        }, { once: true });
+      })();
+    </script>
   </body>
 </html>

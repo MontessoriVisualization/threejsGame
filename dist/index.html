@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>My first three.js app</title>
-    <style>body{touch-action:none;-webkit-touch-callout:none;background-color:red;margin:0;overflow:hidden}.controller,.actions{display:none}@media (pointer:coarse){.controller,.actions{display:block}}.controller{--size:210px;--btn:68px;--gap:6px;z-index:10;width:var(--size);height:var(--size);-webkit-user-select:none;user-select:none;touch-action:none;background:radial-gradient(circle at 35% 30%,#2b2b2e,#0e0e10);border-radius:50%;position:absolute;bottom:24px;left:24px;box-shadow:0 10px 24px #0000008c,inset 0 2px 3px #ffffff14}.controller>div{width:var(--btn);height:var(--btn);cursor:pointer;background-color:#1c1c1f;background-image:radial-gradient(circle at 50% 35%,#3a3a3f 0%,#232326 55%,#141416 100%);background-position:50%;background-repeat:no-repeat;background-size:100% 100%;border-radius:50%;transition:transform 60ms,box-shadow 60ms,filter 60ms;position:absolute;box-shadow:0 3px 6px #000000b3,inset 0 1px 1px #ffffff2e,inset 0 -2px 4px #0009}.controller>div:after{content:"";filter:drop-shadow(0 0 3px #0009);background-position:50%;background-repeat:no-repeat;background-size:100% 100%;position:absolute;inset:0}.controller>div:active{filter:brightness(.85);transform:scale(.94);box-shadow:0 1px 2px #000000b3,inset 0 3px 6px #000000b3}.controller-top{top:var(--gap);left:calc(50% - var(--btn) / 2)}.controller-down{bottom:var(--gap);left:calc(50% - var(--btn) / 2)}.controller-left{left:var(--gap);top:calc(50% - var(--btn) / 2)}.controller-right{right:var(--gap);top:calc(50% - var(--btn) / 2)}.controller-top:after{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,25 77,71 23,71' fill='none' stroke='%2300d4a0' stroke-width='7' stroke-linejoin='round'/%3E%3C/svg%3E")}.controller-right:after{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='25' fill='none' stroke='%23ff4b55' stroke-width='7'/%3E%3C/svg%3E")}.controller-down:after{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M29 29L71 71M71 29L29 71' stroke='%235b8cff' stroke-width='7' stroke-linecap='round'/%3E%3C/svg%3E")}.controller-left:after{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='27' y='27' width='46' height='46' rx='3' fill='none' stroke='%23ff8ad8' stroke-width='7' stroke-linejoin='round'/%3E%3C/svg%3E")}.controller-hold{--hold:36px;top:calc(50% - var(--hold) / 2);left:calc(50% - var(--hold) / 2);width:var(--hold)!important;height:var(--hold)!important}.actions{--size:210px;--btn:68px;--gap:6px;z-index:10;width:var(--size);height:var(--size);-webkit-user-select:none;user-select:none;touch-action:none;background:radial-gradient(circle at 65% 30%,#2b2b2e,#0e0e10);border-radius:50%;position:absolute;bottom:24px;right:24px;box-shadow:0 10px 24px #0000008c,inset 0 2px 3px #ffffff14}.actions>div{width:var(--btn);height:var(--btn);cursor:pointer;color:#ffffffb3;text-transform:uppercase;letter-spacing:.5px;background-color:#1c1c1f;background-image:radial-gradient(circle at 50% 35%,#3a3a3f 0%,#232326 55%,#141416 100%);border-radius:50%;justify-content:center;align-items:center;font:700 11px/1 system-ui,sans-serif;transition:transform 60ms,box-shadow 60ms,filter 60ms;display:flex;position:absolute;box-shadow:0 3px 6px #000000b3,inset 0 1px 1px #ffffff2e,inset 0 -2px 4px #0009}.actions>div:active{filter:brightness(.85);transform:scale(.94);box-shadow:0 1px 2px #000000b3,inset 0 3px 6px #000000b3}.action-attack{top:var(--gap);left:calc(50% - var(--btn) / 2);color:#ff4b55!important}.action-roll{bottom:var(--gap);left:calc(50% - var(--btn) / 2);color:#5b8cff!important}.action-secondary{right:var(--gap);top:calc(50% - var(--btn) / 2);color:#ff8ad8!important}.touch-look-zone{z-index:5;touch-action:none;width:50%;height:100%;position:absolute;top:0;right:0}@media (pointer:fine){.touch-look-zone{display:none}}</style>
-    <script type="module" crossorigin src="/assets/index-VEzthdCk.js"></script>
+    <style>body{touch-action:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;background-color:#0d0e15;margin:0;overflow:hidden}.controller,.actions{display:none!important}body.touch-controls-enabled .controller,body.touch-controls-enabled .actions{display:block!important}@media (pointer:fine) and (hover:hover){.controller,.actions{display:none!important}}:root{--pad-size:170px;--btn-size:52px;--btn-bg:#ffffff14;--btn-border:#ffffff29;--btn-active:#ffffff47}.controller,.actions{z-index:20;width:var(--pad-size);height:var(--pad-size);-webkit-backdrop-filter:blur(12px);touch-action:none;background:radial-gradient(circle,#14182373 0%,#0a0c12a6 100%);border:1px solid #ffffff1a;border-radius:50%;position:absolute;bottom:28px;box-shadow:0 8px 32px #00000073,inset 0 1px 1px #ffffff1f}.controller{left:28px}.actions{right:28px}.controller>div,.actions>div{width:var(--btn-size);height:var(--btn-size);cursor:pointer;background:var(--btn-bg);border:1px solid var(--btn-border);-webkit-tap-highlight-color:transparent;border-radius:50%;justify-content:center;align-items:center;transition:transform 80ms,background 80ms,box-shadow 80ms;display:flex;position:absolute;box-shadow:0 4px 12px #00000059,inset 0 1px 2px #ffffff26}.controller>div:active,.actions>div:active{background:var(--btn-active);transform:scale(.91);box-shadow:0 2px 6px #00000080,inset 0 2px 4px #0006}.controller-top,.action-attack{top:8px;left:calc(50% - var(--btn-size) / 2)}.controller-down,.action-roll{bottom:8px;left:calc(50% - var(--btn-size) / 2)}.controller-left{left:8px;top:calc(50% - var(--btn-size) / 2)}.controller-right,.action-secondary{right:8px;top:calc(50% - var(--btn-size) / 2)}.controller-hold{opacity:.6;border-radius:50%;top:calc(50% - 17px);left:calc(50% - 17px);width:34px!important;height:34px!important}.controller>div:after{content:"";border-style:solid;width:0;height:0}.controller-top:after{border-width:0 7px 11px;border-color:#0000 #0000 #ffffffd9}.controller-down:after{border-width:11px 7px 0;border-color:#ffffffd9 #0000 #0000}.controller-left:after{border-width:7px 11px 7px 0;border-color:#0000 #ffffffd9 #0000 #0000}.controller-right:after{border-width:7px 0 7px 11px;border-color:#0000 #0000 #0000 #ffffffd9}.controller-hold:after{content:"";background:#ffffffb3;border-radius:50%;width:8px;height:8px}.actions>div{letter-spacing:.8px;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:11px;font-weight:700}.action-attack{color:#ff526c;background:radial-gradient(circle,#ff526c26 0%,#ff526c0d 100%);border-color:#ff526c59}.action-roll{color:#4da4ff;background:radial-gradient(circle,#4da4ff26 0%,#4da4ff0d 100%);border-color:#4da4ff59}.action-secondary{color:#c471ed;background:radial-gradient(circle,#c471ed26 0%,#c471ed0d 100%);border-color:#c471ed59}.rotate-overlay{z-index:9999;-webkit-backdrop-filter:blur(10px);color:#fff;text-align:center;background:#0a0c12f0;flex-direction:column;justify-content:center;align-items:center;gap:20px;padding:32px;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;font-size:17px;font-weight:500;display:none;position:fixed;inset:0}.rotate-overlay svg{opacity:.9;width:72px;height:72px;animation:2s ease-in-out infinite rock}@keyframes rock{0%,to{transform:rotate(0)}30%,70%{transform:rotate(90deg)}}@media (pointer:coarse) and (orientation:portrait){.rotate-overlay{display:flex}}</style>
+    <script type="module" crossorigin src="/assets/index-DH0rqpz2.js"></script>
   </head>
   <body>
     <div class="controller">
@@ -23,8 +23,43 @@
         <div class="action-secondary">SEC</div>
     </div>
 
-    <!-- invisible touch zone for camera look (right half of screen) -->
-    <div class="touch-look-zone"></div>
+
+    <!-- rotate-your-phone overlay (CSS hides it in landscape / on desktop) -->
+    <div class="rotate-overlay">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="4" y="2" width="16" height="20" rx="2" />
+        <line x1="12" y1="18" x2="12" y2="18.01" stroke-width="2" />
+      </svg>
+      <span>Rotate your device to landscape</span>
+    </div>
 
+
+    <!-- try to auto-lock orientation to landscape -->
+    <script>
+      (function () {
+        // The Screen Orientation API only works in fullscreen or installed PWA mode.
+        // On first tap we request fullscreen, then lock to landscape.
+        function tryLock() {
+          if (screen.orientation && screen.orientation.lock) {
+            screen.orientation.lock('landscape').catch(function () {
+              // Silently ignore — the CSS overlay handles the fallback.
+            });
+          }
+        }
+
+        // Attempt immediately (works in PWA / already-fullscreen contexts).
+        tryLock();
+
+        // On the first user interaction, go fullscreen + lock.
+        document.addEventListener('touchstart', function onTouch() {
+          document.removeEventListener('touchstart', onTouch);
+          var el = document.documentElement;
+          var rfs = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+          if (rfs) {
+            rfs.call(el).then(tryLock).catch(function () {});
+          }
+        }, { once: true });
+      })();
+    </script>
   </body>
 </html>

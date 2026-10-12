@@ -152,14 +152,26 @@ function stick(x = 0, y = 0) {
   return [x * scale, y * scale];
 }
 
-let frame = null;
-const padHeld = { attack: false, secondary: false, roll: false };   // so a held button only fires once
-const clearPadHeld = () => { padHeld.attack = padHeld.secondary = padHeld.roll = false; };
+function updateOnScreenControlsVisibility() {
+  const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+  const pads = navigator.getGamepads ? navigator.getGamepads() : [];
+  const gamepadActive = Array.from(pads).some(p => p && p.connected);
+
+  if (isTouchDevice && !gamepadActive) {
+    document.body.classList.add('touch-controls-enabled');
+  } else {
+    document.body.classList.remove('touch-controls-enabled');
+  }
+}
+
+// Initial check
+updateOnScreenControlsVisibility();
 
 function pollGamepad() {
-  const pad = navigator.getGamepads()[0];
+  const pads = navigator.getGamepads ? navigator.getGamepads() : [];
+  const pad = pads[0];
 
-  if (pad) {
+  if (pad && pad.connected) {
     [padMove.x, padMove.z] = stick(pad.axes[0], pad.axes[1]);
     [look.padX, look.padY] = stick(pad.axes[2], pad.axes[3]);
 
@@ -179,10 +191,12 @@ function pollGamepad() {
 }
 
 window.addEventListener('gamepadconnected', () => {
+  updateOnScreenControlsVisibility();
   if (frame === null) frame = requestAnimationFrame(pollGamepad);
 });
 
 window.addEventListener('gamepaddisconnected', () => {
+  updateOnScreenControlsVisibility();
   cancelAnimationFrame(frame);
   frame = null;
   padMove.x = padMove.z = 0;
@@ -198,41 +212,59 @@ window.addEventListener('gamepaddisconnected', () => {
 export function consumeLook(dt = 1 / 60, { mouseSens = 0.002, padSpeed = 2.5 } = {}) {
   const yaw   = look.mouseDX * mouseSens + look.padX * padSpeed * dt;
   const pitch = look.mouseDY * mouseSens + look.padY * padSpeed * dt;
-  look.mouseDX = look.mouseDY = 0; // mouse deltas are one-shot, so reset after reading
+  look.mouseDX = 0; // mouse/touch deltas are one-shot, reset after reading
+  look.mouseDY = 0;
   return { yaw, pitch };
 }
 
-// ---------- touch camera look (mobile) ----------
-// Dragging on the .touch-look-zone (right half of the screen) rotates the camera.
-// Touches on UI buttons (z-index 10) sit above the zone (z-index 5), so they still work.
+// ---------- touch camera look (phone / mobile) ----------
+// Any touch drag on the screen (that is not clicking a D-Pad or action button)
+// rotates the camera smoothly, identical to mouse movement.
 {
-  const zone = document.querySelector('.touch-look-zone');
-  if (zone) {
-    const TOUCH_SENS = 0.004;         // radians per CSS pixel of finger movement
-    const activePointers = new Map();  // pointerId → { x, y }
+  const activeTouchMap = new Map(); // identifier -> { x, y }
+  const TOUCH_LOOK_SENS = 0.0035;
 
-    zone.addEventListener('pointerdown', (e) => {
+  function isInteractableUI(target) {
+    return target.closest && (target.closest('.controller') || target.closest('.actions'));
+  }
+
+  window.addEventListener('touchstart', (e) => {
+    for (let i = 0; i < e.changedTouches.length; i++) {
+      const touch = e.changedTouches[i];
+      if (isInteractableUI(touch.target)) continue;
+      // Register touch for camera drag
+      activeTouchMap.set(touch.identifier, { x: touch.clientX, y: touch.clientY });
+    }
+  }, { passive: false });
+
+  window.addEventListener('touchmove', (e) => {
+    let handledTouch = false;
+    for (let i = 0; i < e.changedTouches.length; i++) {
+      const touch = e.changedTouches[i];
+      const prev = activeTouchMap.get(touch.identifier);
+      if (!prev) continue;
+
+      const dx = touch.clientX - prev.x;
+      const dy = touch.clientY - prev.y;
+
+      look.mouseDX += dx * (TOUCH_LOOK_SENS / 0.002);
+      look.mouseDY += dy * (TOUCH_LOOK_SENS / 0.002);
+
+      prev.x = touch.clientX;
+      prev.y = touch.clientY;
+      handledTouch = true;
+    }
+    if (handledTouch) {
       e.preventDefault();
-      zone.setPointerCapture(e.pointerId);
-      activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    });
+    }
+  }, { passive: false });
 
-    zone.addEventListener('pointermove', (e) => {
-      const prev = activePointers.get(e.pointerId);
-      if (!prev) return;
-
-      // feed deltas into the same look accumulator the mouse uses
-      look.mouseDX += (e.clientX - prev.x) * (TOUCH_SENS / 0.002);
-      look.mouseDY += (e.clientY - prev.y) * (TOUCH_SENS / 0.002);
-
-      prev.x = e.clientX;
-      prev.y = e.clientY;
-    });
-
-    for (const ev of ['pointerup', 'pointercancel']) {
-      zone.addEventListener(ev, (e) => {
-        activePointers.delete(e.pointerId);
-      });
+  function endTouches(e) {
+    for (let i = 0; i < e.changedTouches.length; i++) {
+      activeTouchMap.delete(e.changedTouches[i].identifier);
     }
   }
+
+  window.addEventListener('touchend', endTouches, { passive: true });
+  window.addEventListener('touchcancel', endTouches, { passive: true });
 }
